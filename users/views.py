@@ -4,4 +4,4 @@ from .models import User
 # Create your views here.
 def index(request):
     users = User.objects.all()
-    return HttpResponse(f"Total Users: {users.count()}")
+    return render(request, 'users/index.html')
