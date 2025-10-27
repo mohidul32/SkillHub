@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Your Courses</h2>
+<a href="{% url 'course_create' %}">+ Add New Course</a>
+<ul>
+  {% for course in courses %}
+    <li>
+      <a href="{% url 'course_detail' course.pk %}">{{ course.title }}</a>
+      - {{ course.category }}
+      (<a href="{% url 'course_update' course.pk %}">Edit</a> |
+      <a href="{% url 'course_delete' course.pk %}">Delete</a>)
+    </li>
+  {% empty %}
+    <p>No courses yet.</p>
+  {% endfor %}
+</ul>
+{% endblock %}
