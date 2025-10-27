@@ -45,3 +45,15 @@ def course_delete(request, pk):
         course.delete()
         return redirect('course_list')
     return render(request, 'courses/course_confirm_delete.html', {'course': course})
+
+@login_required
+def enroll_course(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    course.students.add(request.user)
+    return redirect('course_detail', pk=course.id)
+
+@login_required
+def unenroll_course(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    course.students.remove(request.user)
+    return redirect('course_detail', pk=course.id)

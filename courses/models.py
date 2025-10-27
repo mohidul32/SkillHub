@@ -18,6 +18,7 @@ class Category(models.Model):
 class Course(models.Model):
     instructor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='courses')
+    students = models.ManyToManyField(User, related_name='enrolled_courses', blank=True)
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     description = models.TextField()
