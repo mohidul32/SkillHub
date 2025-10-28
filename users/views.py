@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from .forms import UserSignupForm, UserLoginForm
+from .forms import UserSignupForm, UserLoginForm, StudentSignUpForm, InstructorSignUpForm
 from django.http import HttpResponse
 
 def signup_view(request):
@@ -33,5 +33,32 @@ def logout_view(request):
 
 @login_required
 def dashboard(request):
-    user = request.user
-    return render(request, 'users/dashboard.html', {'user': user})
+    message = ''
+    if request.user.is_instructor():
+        message = "Welcome Instructor!"
+    else:
+        message = "Welcome Student!"
+    return render(request, 'users/dashboard.html', {'message': message})
+
+def student_signup(request):
+    if request.method == 'POST':
+        form = StudentSignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('dashboard')
+    else:
+        form = StudentSignUpForm()
+    return render(request, 'users/student_signup.html', {'form': form})
+
+
+def instructor_signup(request):
+    if request.method == 'POST':
+        form = InstructorSignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('dashboard')
+    else:
+        form = InstructorSignUpForm()
+    return render(request, 'users/instructor_signup.html', {'form': form})
