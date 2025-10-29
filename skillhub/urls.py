@@ -18,12 +18,26 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from users.api_views import MyTokenObtainPairView, LogoutAndBlacklistRefreshTokenForUserView
+
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('courses/', include('courses.urls')),
     path('api/v1/', include('courses.api_urls')),  # API routes
+    # JWT endpoints (conventionally under api/v1/)
+    path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('api/v1/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/logout/', LogoutAndBlacklistRefreshTokenForUserView.as_view(), name='token_blacklist'),
 ]
 
 if settings.DEBUG:
