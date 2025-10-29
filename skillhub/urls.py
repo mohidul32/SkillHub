@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('courses/', include('courses.urls')),
+    path('api/v1/', include('courses.api_urls')),  # API routes
 ]
 
 if settings.DEBUG:
