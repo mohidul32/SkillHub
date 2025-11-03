@@ -24,11 +24,12 @@ class CourseListSerializer(serializers.ModelSerializer):
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())  # writable by id
     instructor = serializers.StringRelatedField(read_only=True)
     lessons = LessonSerializer(many=True, read_only=True)
     students = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    num_students = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'slug', 'description', 'price', 'is_published', 'category', 'instructor', 'lessons', 'students', 'created_at']
+        fields = ['id', 'title', 'slug', 'description', 'price', 'is_published','category', 'instructor', 'lessons', 'students', 'num_students', 'created_at']
