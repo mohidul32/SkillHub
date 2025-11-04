@@ -32,6 +32,7 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('courses/', include('courses.urls')),
     path('api/v1/', include('courses.api_urls')),  # API routes
+    path('api/v1/freelance/', include('freelance.urls')),  # new
     # JWT endpoints (conventionally under api/v1/)
     path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

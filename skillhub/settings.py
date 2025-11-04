@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'courses',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
-    'django_filters'
+    'django_filters',
+    'freelance',
 ]
 
 MIDDLEWARE = [
