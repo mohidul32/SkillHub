@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Freelance Dashboard</h2>
+
+{% if freelancer %}
+  <p><strong>{{ freelancer.user.username }}</strong> — {{ freelancer.bio }}</p>
+  <h3>Your Gigs:</h3>
+  <ul>
+    {% for gig in gigs %}
+      <li>{{ gig.title }} — {{ gig.price }}৳</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>You’re not a freelancer yet.</p>
+{% endif %}
+
+<h3>Your Orders:</h3>
+<ul>
+  {% for order in orders %}
+    <li>{{ order.gig.title }} (Client: {{ order.client.username }})</li>
+  {% empty %}
+    <li>No orders yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

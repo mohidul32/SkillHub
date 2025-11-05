@@ -3,7 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db.models import Prefetch
-
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from .models import Freelancer, Gig, Order
 from .serializers import FreelancerSerializer, GigSerializer, OrderSerializer
 from django.contrib.auth import get_user_model
@@ -90,3 +91,14 @@ class OrderViewSet(viewsets.ModelViewSet):
         if user.is_superuser:
             return Order.objects.all()
         return Order.objects.filter(client=user)
+
+@login_required
+def dashboard(request):
+    freelancer = Freelancer.objects.filter(user=request.user).first()
+    gigs = Gig.objects.filter(freelancer=freelancer) if freelancer else []
+    orders = Order.objects.filter(client=request.user)
+    return render(request, 'freelance/dashboard.html', {
+        'freelancer': freelancer,
+        'gigs': gigs,
+        'orders': orders,
+    })
