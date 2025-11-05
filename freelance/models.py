@@ -8,6 +8,13 @@ class Freelancer(models.Model):
     skills = models.ManyToManyField(Course, blank=True)
     rating = models.FloatField(default=0)
 
+    # NEW: clients who favorited / follow / have a relationship with this freelancer
+    clients = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='favorite_freelancers',
+        blank=True,
+    )
+
     def __str__(self):
         return self.user.username
 
@@ -25,7 +32,7 @@ class Gig(models.Model):
 
 class Order(models.Model):
     client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='client_orders')
-    gig = models.ForeignKey(Gig, on_delete=models.CASCADE)
+    gig = models.ForeignKey(Gig, on_delete=models.CASCADE, related_name='orders')
     status_choices = [
         ('pending', 'Pending'),
         ('in_progress', 'In Progress'),
