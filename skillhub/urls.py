@@ -33,6 +33,7 @@ urlpatterns = [
     # App routes
     path('users/', include('users.urls')),
     path('courses/', include('courses.urls')),
+    path('chat/', include('chat.urls')),
 
     # API routes
     path('api/v1/', include('courses.api_urls')),

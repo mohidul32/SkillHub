@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'freelance',
+    'channels',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -181,7 +183,7 @@ SIMPLE_JWT = {
 }
 
 # Celery / Redis settings
-CELERY_BROKER_URL = os.getenv('REDIS_URL', 'redis://localhost:6380/0')
+CELERY_BROKER_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = os.getenv('REDIS_RESULT_BACKEND', 'redis://localhost:6379/1')
 
 # Optional celery beat schedule
@@ -193,4 +195,16 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+# ASGI application
+ASGI_APPLICATION = 'first_project.asgi.application'
+
+# Channel layers using Redis
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
