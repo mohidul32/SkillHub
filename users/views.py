@@ -16,30 +16,30 @@ User = get_user_model()
 
 def signup_view(request):
     if request.method == 'POST':
-        form = UserSignupForm(request.POST)
+        form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False  # deactivate until email verification
             user.save()
-
-            send_activation_email(request, user)
+            # call celery task async
+            send_activation_email_task.delay(user.pk)
             messages.success(request, "Please check your email to activate your account.")
             return redirect('login')
     else:
         form = UserSignupForm()
     return render(request, 'users/signup.html', {'form': form})
 
-def send_activation_email(request, user):
-    current_site = get_current_site(request)
-    subject = "Activate your account"
-    message = render_to_string('users/account_activation_email.html', {
-        'user': user,
-        'domain': current_site.domain,
-        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': default_token_generator.make_token(user),
-    })
-    email = EmailMessage(subject, message, to=[user.email])
-    email.send()
+# def send_activation_email(request, user):
+#     current_site = get_current_site(request)
+#     subject = "Activate your account"
+#     message = render_to_string('users/account_activation_email.html', {
+#         'user': user,
+#         'domain': current_site.domain,
+#         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+#         'token': default_token_generator.make_token(user),
+#     })
+#     email = EmailMessage(subject, message, to=[user.email])
+#     email.send()
 
 
 def activate(request, uidb64, token):

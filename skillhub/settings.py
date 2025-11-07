@@ -180,3 +180,17 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
+# Celery / Redis settings
+CELERY_BROKER_URL = os.getenv('REDIS_URL', 'redis://localhost:6380/0')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_RESULT_BACKEND', 'redis://localhost:6379/1')
+
+# Optional celery beat schedule
+from datetime import timedelta
+CELERY_BEAT_SCHEDULE = {
+    'daily-send-summary': {
+        'task': 'users.tasks.daily_summary',  # example task, create it below
+        'schedule': timedelta(days=1),
+    },
+}
+
+

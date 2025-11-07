@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Freelancer, Gig, Order
 from .serializers import FreelancerSerializer, GigSerializer, OrderSerializer
 from django.contrib.auth import get_user_model
+from .tasks import generate_invoice_task
 
 User = get_user_model()
 
@@ -91,6 +92,10 @@ class OrderViewSet(viewsets.ModelViewSet):
         if user.is_superuser:
             return Order.objects.all()
         return Order.objects.filter(client=user)
+
+    def perform_create(self, serializer):
+        order = serializer.save(client=self.request.user)
+        generate_invoice_task.delay(order.pk)
 
 @login_required
 def dashboard(request):

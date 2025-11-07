@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from .tasks import generate_invoice_task
 
 from .models import Freelancer, Gig, Order
 from .serializers import FreelancerSerializer, GigSerializer, OrderSerializer
@@ -46,3 +47,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(client=self.request.user)
+
+    def perform_create(self, serializer):
+        order = serializer.save(client=self.request.user)
+        generate_invoice_task.delay(order.pk)
