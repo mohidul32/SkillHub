@@ -21,10 +21,10 @@ class Freelancer(models.Model):
 
 class Gig(models.Model):
     freelancer = models.ForeignKey(Freelancer, on_delete=models.CASCADE, related_name='gigs')
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, db_index=True)
     description = models.TextField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __str__(self):
         return self.title
