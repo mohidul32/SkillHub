@@ -6,12 +6,14 @@ from .forms import CourseForm
 
 @login_required
 def course_list(request):
-    courses = Course.objects.filter(instructor=request.user)
+    # courses = Course.objects.filter(instructor=request.user)    #before optimize
+    courses = Course.objects.select_related('category', 'instructor').all()
     return render(request, 'courses/course_list.html', {'courses': courses})
 
 @login_required
 def course_detail(request, pk):
-    course = get_object_or_404(Course, pk=pk, instructor=request.user)
+    # course = get_object_or_404(Course, pk=pk, instructor=request.user)  #before optimize
+    course = Course.objects.select_related('category', 'instructor').prefetch_related('lessons').get(pk=pk)
     return render(request, 'courses/course_details.html', {'course': course})
 
 @login_required
