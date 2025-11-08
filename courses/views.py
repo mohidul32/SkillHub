@@ -2,12 +2,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from users.decorators import instructor_required, student_required
 from .models import Course
-from .forms import CourseForm
+from .forms import CourseFormfrom django.core.cache import cache
+from django.conf import settings
 
 @login_required
 def course_list(request):
     # courses = Course.objects.filter(instructor=request.user)    #before optimize
-    courses = Course.objects.select_related('category', 'instructor').all()
+    courses = cache.get('all_courses')
+    if not courses:
+        courses = Course.objects.select_related('category', 'instructor').all()
+        cache.set('all_courses', courses, timeout=settings.CACHE_TTL)
     return render(request, 'courses/course_list.html', {'courses': courses})
 
 @login_required

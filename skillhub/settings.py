@@ -219,3 +219,19 @@ CHANNEL_LAYERS = {
     },
 }
 
+
+# Redis cache configuration
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv("REDIS_URL", "redis://127.0.0.1:6379/1"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# Optional: Set a default cache timeout (in seconds)
+CACHE_TTL = 60 * 15  # 15 minutes
+
+
