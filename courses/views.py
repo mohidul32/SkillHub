@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from users.decorators import instructor_required, student_required
 from .models import Course
-from .forms import CourseFormfrom django.core.cache import cache
+from .forms import CourseForm
+from django.core.cache import cache
 from django.conf import settings
 
 @login_required
