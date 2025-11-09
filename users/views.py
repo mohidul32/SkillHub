@@ -11,6 +11,19 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 from django.contrib import messages
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status, permissions
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.throttling import AnonRateThrottle
+from .throttles import LoginRateThrottle
+from django_ratelimit.decorators import ratelimit
+
+class ThrottledTokenObtainPairView(TokenObtainPairView):
+    throttle_classes = [LoginRateThrottle]
+
 
 User = get_user_model()
 
@@ -57,7 +70,7 @@ def activate(request, uidb64, token):
     else:
         return render(request, 'users/activation_invalid.html')
 
-
+@ratelimit(key='ip', rate='5/m', block=True)
 def login_view(request):
     if request.method == 'POST':
         form = UserLoginForm(request, data=request.POST)
@@ -105,3 +118,20 @@ def instructor_signup(request):
     else:
         form = InstructorSignUpForm()
     return render(request, 'users/instructor_signup.html', {'form': form})
+
+class LogoutAndBlacklistRefreshTokenForUserView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        """
+        Expected body: {"refresh": "<refresh_token>"}
+        This view blacklists the provided refresh token (and its rotated tokens).
+        """
+        try:
+            refresh_token = request.data.get("refresh")
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response({"detail": "Invalid token or already blacklisted."}, status=status.HTTP_400_BAD_REQUEST)
+

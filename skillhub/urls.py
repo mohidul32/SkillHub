@@ -19,12 +19,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from users.api_views import MyTokenObtainPairView, LogoutAndBlacklistRefreshTokenForUserView
+from users.views import ThrottledTokenObtainPairView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
+from users.views import LogoutAndBlacklistRefreshTokenForUserView  # create below
 
 
 urlpatterns = [
@@ -40,7 +42,7 @@ urlpatterns = [
     path('api/v1/freelances/', include('freelance.urls')),  # ✅ changed for clarity and REST convention
 
     # JWT authentication endpoints
-    path('api/v1/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/token/', ThrottledTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/v1/logout/', LogoutAndBlacklistRefreshTokenForUserView.as_view(), name='token_blacklist'),
