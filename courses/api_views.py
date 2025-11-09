@@ -4,24 +4,27 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Course, Lesson
 from .serializers import CourseListSerializer, CourseDetailSerializer
 from .pagination import CoursePagination  # optional, from courses/pagination.py
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsInstructorOrReadOnly
 
-class IsInstructorOrReadOnly(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return bool(request.user and request.user.is_authenticated and getattr(request.user, 'role', None) == 'instructor')
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return obj.instructor == request.user
+# class IsInstructorOrReadOnly(permissions.BasePermission):
+#     def has_permission(self, request, view):
+#         if request.method in permissions.SAFE_METHODS:
+#             return True
+#         return bool(request.user and request.user.is_authenticated and getattr(request.user, 'role', None) == 'instructor')
+#
+#     def has_object_permission(self, request, view, obj):
+#         if request.method in permissions.SAFE_METHODS:
+#             return True
+#         return obj.instructor == request.user
 
 class CourseViewSet(viewsets.ModelViewSet):
     # annotate student count and prefetch lessons for efficiency
     queryset = Course.objects.all().annotate(num_students=Count('students')).prefetch_related(
         Prefetch('lessons', queryset=Lesson.objects.order_by('order'))
     )
-    permission_classes = [IsInstructorOrReadOnly]
+    # permission_classes = [IsInstructorOrReadOnly]
+    permission_classes = [IsAuthenticated & IsInstructorOrReadOnly]
     lookup_field = 'pk'  # keep default
 
     # pagination: prefer view-level explicit paginator (falls back to DEFAULT)
