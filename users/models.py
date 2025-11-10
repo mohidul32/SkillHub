@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth import get_user_model
 
 class User(AbstractUser):
     # User roles
@@ -17,4 +18,18 @@ class User(AbstractUser):
 
     def is_instructor(self):
         return self.role == 'instructor'
+
+User = get_user_model()
+
+class ActivityLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    path = models.CharField(max_length=255)
+    method = models.CharField(max_length=10)
+    status_code = models.PositiveIntegerField()
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    duration = models.FloatField(help_text="Request duration in seconds")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.path} ({self.method})"
 
