@@ -31,7 +31,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY: use environment vars in production. Example defaults for dev below.
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-secret-key-change-me')
 
-DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
+# DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
+DEBUG = True
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
@@ -236,7 +237,7 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 # ASGI application
-ASGI_APPLICATION = 'first_project.asgi.application'
+ASGI_APPLICATION = 'skillhub.asgi.application'
 
 # Channel layers using Redis
 CHANNEL_LAYERS = {
