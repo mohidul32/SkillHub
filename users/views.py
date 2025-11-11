@@ -20,6 +20,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.throttling import AnonRateThrottle
 from .throttles import LoginRateThrottle
 from django_ratelimit.decorators import ratelimit
+from users.tasks import send_activation_email_task
 
 class ThrottledTokenObtainPairView(TokenObtainPairView):
     throttle_classes = [LoginRateThrottle]
@@ -29,7 +30,7 @@ User = get_user_model()
 
 def signup_view(request):
     if request.method == 'POST':
-        form = SignupForm(request.POST)
+        form = UserSignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False  # deactivate until email verification
