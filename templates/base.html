@@ -15,4 +15,18 @@
     <hr>
     {% block content %}{% endblock %}
 </body>
+<footer>
+  <div>
+    Total Users: {{ site_stats.total_users }} |
+    Courses: {{ site_stats.total_courses }} |
+    Gigs: {{ site_stats.total_gigs }}
+  </div>
+
+  {% if user_short %}
+    <div>Hello, {{ user_short.username }} ({{ user_short.role }})</div>
+  {% else %}
+    <div><a href="{% url 'login' %}">Login</a></div>
+  {% endif %}
+</footer>
+
 </html>
